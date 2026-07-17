@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  @apply transition-colors duration-200;
+}
+
+body {
+  @apply bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100;
+}
+
+/* Glassmorphism components */
+.glass {
+  @apply backdrop-blur-xl bg-white/10 dark:bg-gray-900/10 border border-white/20 dark:border-gray-700/20;
+}
+
+.glass-light {
+  @apply backdrop-blur-md bg-white/30 dark:bg-gray-900/30 border border-white/30 dark:border-gray-700/30;
+}
+
+/* Smooth scrollbar */
+::-webkit-scrollbar {
+  @apply w-2;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-400 dark:bg-gray-600 rounded-full hover:bg-gray-500;
+}
+
+/* Loading animation */
+.spin-slow {
+  animation: spin 3s linear infinite;
+}
+
+/* Pulse animation */
+.animate-pulse-slow {
+  animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Text gradient */
+.text-gradient {
+  @apply bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-500 bg-clip-text text-transparent;
+}
+
+/* Gradient border */
+.gradient-border {
+  @apply relative after:absolute after:inset-0 after:rounded-lg after:p-[2px] after:bg-gradient-to-r after:from-purple-500 after:via-pink-500 after:to-cyan-500 after:-z-10;
+}

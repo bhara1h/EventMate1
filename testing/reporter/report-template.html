@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EventMate E2E Test Report Dashboard</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-main: #0b0f19;
+      --bg-card: rgba(17, 24, 39, 0.7);
+      --bg-card-hover: rgba(31, 41, 55, 0.8);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      
+      --color-primary: #6366f1; /* Indigo */
+      --color-primary-glow: rgba(99, 102, 241, 0.15);
+      --color-success: #10b981; /* Emerald */
+      --color-success-glow: rgba(16, 185, 129, 0.15);
+      --color-error: #ef4444; /* Rose */
+      --color-error-glow: rgba(239, 68, 68, 0.15);
+      --color-warning: #f59e0b; /* Amber */
+      --color-warning-glow: rgba(245, 158, 11, 0.15);
+      --color-info: #06b6d4; /* Cyan */
+      --color-info-glow: rgba(6, 182, 212, 0.15);
+      
+      --font-display: 'Outfit', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    /* Light Mode Variables if needed, but a sleek dark mode is premium */
+    body.light-mode {
+      --bg-main: #f8fafc;
+      --bg-card: rgba(255, 255, 255, 0.8);
+      --bg-card-hover: rgba(255, 255, 255, 0.95);
+      --border-color: rgba(0, 0, 0, 0.06);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --color-primary-glow: rgba(99, 102, 241, 0.08);
+      --color-success-glow: rgba(16, 185, 129, 0.08);
+      --color-error-glow: rgba(239, 68, 68, 0.08);
+      --color-warning-glow: rgba(245, 158, 11, 0.08);
+      --color-info-glow: rgba(6, 182, 212, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding: 2rem;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.05) 0%, transparent 40%);
+      background-attachment: fixed;
+    }
+
+    /* Glassmorphic Container */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* Header Styling */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-info));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-weight: 800;
+      color: white;
+      font-size: 24px;
+      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+      animation: pulse 3s infinite alternate;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3); }
+      100% { transform: scale(1.05); box-shadow: 0 4px 25px rgba(99, 102, 241, 0.5); }
+    }
+
+    .title-group h1 {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    body.light-mode .title-group h1 {
+      background: linear-gradient(135deg, #0f172a 30%, #4338ca 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .title-group p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .actions-group {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .btn {
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.875rem;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      outline: none;
+    }
+
+    .btn:hover {
+      background: var(--bg-card-hover);
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--color-primary), #4f46e5);
+      border: none;
+      color: white;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #4f46e5, #4338ca);
+      box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3);
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--accent-color, var(--color-primary));
+    }
+
+    .stat-card.pass { --accent-color: var(--color-success); }
+    .stat-card.fail { --accent-color: var(--color-error); }
+    .stat-card.duration { --accent-color: var(--color-warning); }
+    .stat-card.rate { --accent-color: var(--color-info); }
+
+    .stat-label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-value {
+      font-family: var(--font-display);
+      font-size: 2.25rem;
+      font-weight: 800;
+      line-height: 1;
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    .stat-value span.unit {
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .stat-icon {
+      position: absolute;
+      right: 1.5rem;
+      bottom: 1.5rem;
+      opacity: 0.15;
+      font-size: 3rem;
+      pointer-events: none;
+    }
+
+    /* Dashboard Layout */
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    @media (max-width: 1024px) {
+      .dashboard-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Sidebar controls */
+    .sidebar {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.5rem;
+    }
+
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.125rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Chart styles */
+    .chart-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem 0;
+      position: relative;
+    }
+
+    .svg-chart {
+      transform: rotate(-90deg);
+    }
+
+    .chart-center-text {
+      position: absolute;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .chart-percentage {
+      font-family: var(--font-display);
+      font-size: 2.25rem;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--color-success);
+    }
+    
+    .chart-percentage.has-failures {
+      color: var(--color-error);
+    }
+
+    .chart-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* Filters & Search */
+    .filter-section {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .search-box {
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.5rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      color: var(--text-main);
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px var(--color-primary-glow);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .filter-group label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .filter-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .chip {
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      user-select: none;
+    }
+
+    .chip:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+    }
+
+    .chip.active {
+      background: var(--color-primary-glow);
+      border-color: var(--color-primary);
+      color: #818cf8;
+    }
+
+    .chip.active.success {
+      background: var(--color-success-glow);
+      border-color: var(--color-success);
+      color: #34d399;
+    }
+
+    .chip.active.error {
+      background: var(--color-error-glow);
+      border-color: var(--color-error);
+      color: #f87171;
+    }
+
+    /* Test List Container */
+    .test-list-container {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .suite-header {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .suite-count {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .test-row {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .test-row:hover {
+      background: var(--bg-card-hover);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .test-header-summary {
+      padding: 1.2rem;
+      display: grid;
+      grid-template-columns: 80px 1fr 100px 100px;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    @media (max-width: 640px) {
+      .test-header-summary {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+      }
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      width: fit-content;
+    }
+
+    .badge.pass {
+      background: var(--color-success-glow);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .badge.fail {
+      background: var(--color-error-glow);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .badge.selenium {
+      background: var(--color-primary-glow);
+      color: #818cf8;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+
+    .badge.appium {
+      background: var(--color-info-glow);
+      color: #22d3ee;
+      border: 1px solid rgba(6, 182, 212, 0.3);
+    }
+
+    .test-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .test-suite-tag {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .test-duration {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-align: right;
+    }
+
+    .test-chevron {
+      text-align: right;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .test-chevron svg {
+      transition: transform 0.2s ease;
+    }
+
+    .test-row.expanded .test-chevron svg {
+      transform: rotate(180deg);
+    }
+
+    /* Expanded Details */
+    .test-details {
+      display: none;
+      padding: 0 1.2rem 1.2rem 1.2rem;
+      border-top: 1px solid var(--border-color);
+      background: rgba(0, 0, 0, 0.15);
+    }
+
+    .test-row.expanded .test-details {
+      display: block;
+      animation: slideDown 0.2s ease-out;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .detail-section {
+      margin-top: 1rem;
+    }
+
+    .detail-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .error-box {
+      background: #070913;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 8px;
+      padding: 1rem;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: #f87171;
+      white-space: pre-wrap;
+    }
+
+    .log-box {
+      background: #070913;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: #a7f3d0;
+      white-space: pre-wrap;
+      max-height: 250px;
+      overflow-y: auto;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--text-muted);
+    }
+
+    .empty-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.3;
+    }
+
+    /* Suite Summary Breakdowns */
+    .suite-breakdown {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .suite-progress-bar-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.8rem;
+    }
+
+    .suite-progress-bar-name {
+      width: 80px;
+      font-weight: 600;
+    }
+
+    .suite-progress-bar-track {
+      flex-grow: 1;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .suite-progress-bar-fill {
+      height: 100%;
+      background: var(--color-success);
+      border-radius: 4px;
+    }
+    
+    .suite-progress-bar-fill.has-failures {
+      background: var(--color-error);
+    }
+
+    .suite-progress-bar-val {
+      width: 40px;
+      text-align: right;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <header>
+      <div class="logo-container">
+        <div class="logo-icon">EM</div>
+        <div class="title-group">
+          <h1>EventMate E2E Test Report</h1>
+          <p id="execution-meta">Executed on 2026-07-17 | Running on CI/CD pipeline</p>
+        </div>
+      </div>
+      
+      <div class="actions-group">
+        <button class="btn" id="theme-toggle">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          Theme
+        </button>
+      </div>
+    </header>
+
+    <!-- Stats Panel -->
+    <div class="stats-grid">
+      
+      <div class="stat-card rate">
+        <div class="stat-label">Success Rate</div>
+        <div class="stat-value" id="stats-rate">0%</div>
+        <div class="stat-icon">🎯</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Total Tests</div>
+        <div class="stat-value" id="stats-total">0</div>
+        <div class="stat-icon">🧪</div>
+      </div>
+
+      <div class="stat-card pass">
+        <div class="stat-label">Passed</div>
+        <div class="stat-value" id="stats-passed">0</div>
+        <div class="stat-icon">✅</div>
+      </div>
+
+      <div class="stat-card fail">
+        <div class="stat-label">Failed</div>
+        <div class="stat-value" id="stats-failed">0</div>
+        <div class="stat-icon">❌</div>
+      </div>
+
+      <div class="stat-card duration">
+        <div class="stat-label">Total Duration</div>
+        <div class="stat-value" id="stats-duration">0s</div>
+        <div class="stat-icon">⏱️</div>
+      </div>
+
+    </div>
+
+    <!-- Main Layout -->
+    <div class="dashboard-layout">
+      
+      <!-- Sidebar Controls -->
+      <aside class="sidebar">
+        
+        <!-- Doughnut Success Gauge -->
+        <div class="card">
+          <div class="card-title">Success Distribution</div>
+          <div class="chart-container">
+            <svg class="svg-chart" width="180" height="180" viewBox="0 0 180 180">
+              <circle cx="90" cy="90" r="70" fill="transparent" stroke="rgba(255,255,255,0.05)" stroke-width="16" />
+              <circle id="gauge-fill" cx="90" cy="90" r="70" fill="transparent" stroke="var(--color-success)" stroke-width="16" 
+                      stroke-dasharray="439.8" stroke-dashoffset="439.8" stroke-linecap="round" />
+            </svg>
+            <div class="chart-center-text">
+              <div class="chart-percentage" id="chart-percent">0%</div>
+              <div class="chart-label">Passed</div>
+            </div>
+          </div>
+          
+          <div class="suite-breakdown">
+            <div class="suite-progress-bar-container">
+              <span class="suite-progress-bar-name">Selenium</span>
+              <div class="suite-progress-bar-track">
+                <div class="suite-progress-bar-fill" id="bar-selenium" style="width: 0%"></div>
+              </div>
+              <span class="suite-progress-bar-val" id="val-selenium">0%</span>
+            </div>
+            <div class="suite-progress-bar-container">
+              <span class="suite-progress-bar-name">Appium</span>
+              <div class="suite-progress-bar-track">
+                <div class="suite-progress-bar-fill" id="bar-appium" style="width: 0%"></div>
+              </div>
+              <span class="suite-progress-bar-val" id="val-appium">0%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Filters -->
+        <div class="card">
+          <div class="card-title">Filter Tests</div>
+          
+          <div class="filter-section">
+            <div class="search-box">
+              <svg class="search-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="text" id="search-input" class="search-input" placeholder="Search test name or error...">
+            </div>
+
+            <div class="filter-group">
+              <label>Status</label>
+              <div class="filter-options" id="filter-status">
+                <div class="chip active" data-value="all">All</div>
+                <div class="chip" data-value="passed">Passed</div>
+                <div class="chip" data-value="failed">Failed</div>
+              </div>
+            </div>
+
+            <div class="filter-group">
+              <label>Suite Type</label>
+              <div class="filter-options" id="filter-suite">
+                <div class="chip active" data-value="all">All</div>
+                <div class="chip" data-value="selenium">Selenium</div>
+                <div class="chip" data-value="appium">Appium</div>
+              </div>
+            </div>
+
+            <div class="filter-group">
+              <label>Feature Tag</label>
+              <div class="filter-options" id="filter-tag">
+                <div class="chip active" data-value="all">All</div>
+                <!-- Dynamic feature tags will be injected here -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </aside>
+
+      <!-- Test Cases Content -->
+      <main>
+        
+        <div id="suite-selenium-container">
+          <div class="suite-header">
+            <span>🖥️ Selenium (Web) Tests</span>
+            <span class="suite-count" id="count-selenium">(0 tests)</span>
+          </div>
+          <div class="test-list-container" id="list-selenium">
+            <!-- Selenium tests will be injected here -->
+          </div>
+        </div>
+
+        <div id="suite-appium-container" style="margin-top: 2rem;">
+          <div class="suite-header">
+            <span>📱 Appium (Mobile) Tests</span>
+            <span class="suite-count" id="count-appium">(0 tests)</span>
+          </div>
+          <div class="test-list-container" id="list-appium">
+            <!-- Appium tests will be injected here -->
+          </div>
+        </div>
+
+        <!-- Empty state -->
+        <div id="empty-state" class="card empty-state" style="display: none;">
+          <div class="empty-icon">🔍</div>
+          <h2>No matching tests found</h2>
+          <p>Try refining your search terms or filters.</p>
+        </div>
+
+      </main>
+
+    </div>
+
+  </div>
+
+  <script>
+    // Injection placeholder. Do not remove or change.
+    // The test runner will replace this with: const REPORT_DATA = { ... };
+    // [REPORT_DATA_PLACEHOLDER]
+
+    // Default mock data if opened directly without replacement
+    if (typeof REPORT_DATA === 'undefined') {
+      window.REPORT_DATA = {
+        meta: {
+          timestamp: new Date().toISOString(),
+          durationMs: 12450,
+          environment: "Local Testing Environment"
+        },
+        stats: {
+          total: 2,
+          passed: 1,
+          failed: 1,
+          passPercent: 50
+        },
+        suites: {
+          selenium: { total: 1, passed: 1, failed: 0, rate: 100 },
+          appium: { total: 1, passed: 0, failed: 1, rate: 0 }
+        },
+        tests: [
+          {
+            id: "sel_1",
+            suite: "selenium",
+            title: "User should login successfully as student",
+            duration: 1450,
+            status: "passed",
+            tags: ["auth", "login"],
+            logs: ["Navigating to /auth", "Entering credentials", "Submitting form", "Redirected to /student/dashboard"]
+          },
+          {
+            id: "app_1",
+            suite: "appium",
+            title: "Mobile menu should toggle open and close on tap",
+            duration: 2100,
+            status: "failed",
+            tags: ["layout", "navigation"],
+            logs: ["Setting viewport to mobile width 375px", "Locating hamburger icon", "Triggering tap event"],
+            error: "AssertionError: Expected drawer state to be 'open', but got 'closed'\n    at Context.<anonymous> (testing/suites/appium.test.js:32:14)\n    at processImmediate (node:internal/timers:476:21)"
+          }
+        ]
+      };
+    }
+
+    // Toggle theme
+    const themeToggle = document.getElementById('theme-toggle');
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('light-mode');
+    });
+
+    // Render Dashboard
+    function renderDashboard(data) {
+      // Set metadata
+      const date = new Date(data.meta.timestamp);
+      document.getElementById('execution-meta').textContent = `Executed on ${date.toLocaleString()} | Environment: ${data.meta.environment}`;
+      
+      // Update statistics
+      document.getElementById('stats-total').textContent = data.stats.total;
+      document.getElementById('stats-passed').textContent = data.stats.passed;
+      document.getElementById('stats-failed').textContent = data.stats.failed;
+      document.getElementById('stats-duration').innerHTML = `${(data.meta.durationMs / 1000).toFixed(2)}<span class="unit">s</span>`;
+      
+      const successRate = data.stats.passPercent;
+      document.getElementById('stats-rate').textContent = `${successRate.toFixed(1)}%`;
+      document.getElementById('chart-percent').textContent = `${successRate.toFixed(0)}%`;
+      
+      const chartPercent = document.getElementById('chart-percent');
+      if (data.stats.failed > 0) {
+        chartPercent.classList.add('has-failures');
+      } else {
+        chartPercent.classList.remove('has-failures');
+      }
+
+      // Update circular gauge
+      const circleRadius = 70;
+      const circumference = 2 * Math.PI * circleRadius; // ~439.8
+      const strokeOffset = circumference - (successRate / 100) * circumference;
+      const gaugeFill = document.getElementById('gauge-fill');
+      gaugeFill.style.strokeDashoffset = strokeOffset;
+      if (successRate === 100) {
+        gaugeFill.style.stroke = "var(--color-success)";
+      } else if (successRate >= 90) {
+        gaugeFill.style.stroke = "var(--color-info)";
+      } else if (successRate >= 50) {
+        gaugeFill.style.stroke = "var(--color-warning)";
+      } else {
+        gaugeFill.style.stroke = "var(--color-error)";
+      }
+
+      // Update progress bars for suites
+      const selRate = data.suites.selenium.rate;
+      const appRate = data.suites.appium.rate;
+      
+      const barSel = document.getElementById('bar-selenium');
+      const barApp = document.getElementById('bar-appium');
+      
+      barSel.style.width = `${selRate}%`;
+      if (data.suites.selenium.failed > 0) barSel.classList.add('has-failures');
+      document.getElementById('val-selenium').textContent = `${selRate.toFixed(0)}%`;
+
+      barApp.style.width = `${appRate}%`;
+      if (data.suites.appium.failed > 0) barApp.classList.add('has-failures');
+      document.getElementById('val-appium').textContent = `${appRate.toFixed(0)}%`;
+
+      // Update suite counts
+      document.getElementById('count-selenium').textContent = `(${data.suites.selenium.total} tests)`;
+      document.getElementById('count-appium').textContent = `(${data.suites.appium.total} tests)`;
+
+      // Populate tags filter options
+      const allTags = new Set();
+      data.tests.forEach(t => t.tags && t.tags.forEach(tag => allTags.add(tag)));
+      
+      const tagFilterContainer = document.getElementById('filter-tag');
+      // Reset tag filter container but keep the "All" chip
+      tagFilterContainer.innerHTML = '<div class="chip active" data-value="all">All</div>';
+      allTags.forEach(tag => {
+        const chip = document.createElement('div');
+        chip.className = 'chip';
+        chip.setAttribute('data-value', tag);
+        chip.textContent = `#${tag}`;
+        tagFilterContainer.appendChild(chip);
+      });
+
+      // Render Test Cards
+      renderTestCards(data.tests);
+      setupFiltersAndSearch(data);
+    }
+
+    // Render cards
+    function renderTestCards(tests) {
+      const listSelenium = document.getElementById('list-selenium');
+      const listAppium = document.getElementById('list-appium');
+      const emptyState = document.getElementById('empty-state');
+      
+      listSelenium.innerHTML = '';
+      listAppium.innerHTML = '';
+
+      let visibleSelCount = 0;
+      let visibleAppCount = 0;
+
+      tests.forEach(test => {
+        const row = document.createElement('div');
+        row.className = `test-row ${test.status === 'failed' ? 'failed' : ''}`;
+        row.setAttribute('data-id', test.id);
+        
+        let tagsHtml = (test.tags || []).map(t => `#${t}`).join(' ');
+
+        row.innerHTML = `
+          <div class="test-header-summary">
+            <div>
+              <span class="badge ${test.status}">${test.status}</span>
+            </div>
+            <div>
+              <div class="test-title">${test.title}</div>
+              <div class="test-suite-tag">
+                <span class="badge ${test.suite}">${test.suite}</span>
+                ${tagsHtml ? `<span style="margin-left: 8px;">${tagsHtml}</span>` : ''}
+              </div>
+            </div>
+            <div class="test-duration">${test.duration}ms</div>
+            <div class="test-chevron">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </div>
+          </div>
+          <div class="test-details">
+            ${test.logs && test.logs.length > 0 ? `
+              <div class="detail-section">
+                <div class="detail-title">Execution Steps</div>
+                <pre class="log-box">${test.logs.map(log => `[LOG] ${log}`).join('\n')}</pre>
+              </div>
+            ` : ''}
+            ${test.error ? `
+              <div class="detail-section">
+                <div class="detail-title">Failure Stack Trace</div>
+                <pre class="error-box">${test.error}</pre>
+              </div>
+            ` : ''}
+          </div>
+        `;
+
+        row.addEventListener('click', (e) => {
+          // Prevent expansion if clicking on nested copy buttons or scroll bars if any
+          if (e.target.closest('.log-box') || e.target.closest('.error-box')) return;
+          row.classList.toggle('expanded');
+        });
+
+        if (test.suite === 'selenium') {
+          listSelenium.appendChild(row);
+          visibleSelCount++;
+        } else {
+          listAppium.appendChild(row);
+          visibleAppCount++;
+        }
+      });
+
+      // Show/hide suites based on visibility
+      const selSection = document.getElementById('suite-selenium-container');
+      const appSection = document.getElementById('suite-appium-container');
+
+      selSection.style.display = visibleSelCount > 0 ? 'block' : 'none';
+      appSection.style.display = visibleAppCount > 0 ? 'block' : 'none';
+
+      if (visibleSelCount === 0 && visibleAppCount === 0) {
+        emptyState.style.display = 'block';
+      } else {
+        emptyState.style.display = 'none';
+      }
+    }
+
+    // Filters and Search Setup
+    function setupFiltersAndSearch(data) {
+      const searchInput = document.getElementById('search-input');
+      const statusChips = document.querySelectorAll('#filter-status .chip');
+      const suiteChips = document.querySelectorAll('#filter-suite .chip');
+      
+      let activeFilters = {
+        search: '',
+        status: 'all',
+        suite: 'all',
+        tag: 'all'
+      };
+
+      function applyFilters() {
+        const filteredTests = data.tests.filter(test => {
+          // Search match
+          const searchLower = activeFilters.search.toLowerCase();
+          const matchesSearch = !activeFilters.search || 
+            test.title.toLowerCase().includes(searchLower) || 
+            (test.error && test.error.toLowerCase().includes(searchLower)) ||
+            (test.logs && test.logs.some(l => l.toLowerCase().includes(searchLower)));
+
+          // Status match
+          const matchesStatus = activeFilters.status === 'all' || test.status === activeFilters.status;
+
+          // Suite match
+          const matchesSuite = activeFilters.suite === 'all' || test.suite === activeFilters.suite;
+
+          // Tag match
+          const matchesTag = activeFilters.tag === 'all' || (test.tags && test.tags.includes(activeFilters.tag));
+
+          return matchesSearch && matchesStatus && matchesSuite && matchesTag;
+        });
+
+        renderTestCards(filteredTests);
+      }
+
+      // Search input listener
+      searchInput.addEventListener('input', (e) => {
+        activeFilters.search = e.target.value;
+        applyFilters();
+      });
+
+      // Status chip listener
+      statusChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          statusChips.forEach(c => c.classList.remove('active', 'success', 'error'));
+          chip.classList.add('active');
+          if (chip.getAttribute('data-value') === 'passed') chip.classList.add('success');
+          if (chip.getAttribute('data-value') === 'failed') chip.classList.add('error');
+          activeFilters.status = chip.getAttribute('data-value');
+          applyFilters();
+        });
+      });
+
+      // Suite chip listener
+      suiteChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          suiteChips.forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          activeFilters.suite = chip.getAttribute('data-value');
+          applyFilters();
+        });
+      });
+
+      // Dynamic tags chip listener (event delegation)
+      document.getElementById('filter-tag').addEventListener('click', (e) => {
+        const chip = e.target.closest('.chip');
+        if (!chip) return;
+        
+        const chips = document.querySelectorAll('#filter-tag .chip');
+        chips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        activeFilters.tag = chip.getAttribute('data-value');
+        applyFilters();
+      });
+    }
+
+    // Initialize application
+    document.addEventListener('DOMContentLoaded', () => {
+      renderDashboard(window.REPORT_DATA);
+    });
+  </script>
+</body>
+</html>

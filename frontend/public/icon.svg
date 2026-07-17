@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background -->
+  <rect width="512" height="512" rx="128" fill="#2563eb"/>
+  
+  <!-- Calender Base -->
+  <rect x="120" y="160" width="272" height="232" rx="32" fill="#ffffff"/>
+  
+  <!-- Calender Header -->
+  <rect x="120" y="160" width="272" height="80" rx="32" fill="#f8fafc"/>
+  <rect x="120" y="200" width="272" height="40" fill="#f8fafc"/>
+  
+  <!-- Rings -->
+  <rect x="176" y="112" width="24" height="80" rx="12" fill="#94a3b8"/>
+  <rect x="312" y="112" width="24" height="80" rx="12" fill="#94a3b8"/>
+  
+  <!-- Checkmark / Check in details -->
+  <path d="M 200 300 L 240 340 L 320 250" fill="none" stroke="#2563eb" stroke-width="32" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

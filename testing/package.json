@@ -1,0 +1,18 @@
+{
+  "name": "eventmate-testing",
+  "version": "1.0.0",
+  "description": "Selenium & Appium test suites for EventMate",
+  "main": "testRunner.js",
+  "scripts": {
+    "test:all": "node testRunner.js",
+    "test:selenium": "node testRunner.js --suite selenium",
+    "test:appium": "node testRunner.js --suite appium",
+    "report:serve": "node -e \"const express = require('express'); const app = express(); app.use(express.static('reports')); app.listen(8080, () => console.log('Report serving at http://localhost:8080/report.html'));\""
+  },
+  "dependencies": {
+    "chai": "^4.3.10",
+    "express": "^4.18.2",
+    "mocha": "^10.2.0",
+    "selenium-webdriver": "^4.16.0"
+  }
+}
