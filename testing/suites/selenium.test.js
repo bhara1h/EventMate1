@@ -99,7 +99,7 @@ describe('Selenium Web Test Suite', function() {
       { id: 17, desc: 'SQL Injection string protection test in email field', email: "' OR '1'='1", pass: 'password123', isValid: false, err: 'Invalid email' },
       { id: 18, desc: 'SQL Injection string protection test in password field', email: 'student1@eventmate.com', pass: "' OR '1'='1", isValid: false, err: 'Invalid credentials' },
       { id: 19, desc: 'Password visibility toggle action', email: 'student1@eventmate.com', pass: 'password123', isValid: true, isAction: true, isReal: true },
-      { id: 20, desc: 'Auth redirection guard for unauthenticated users', email: '', pass: '', isValid: false, isGuard: true, isReal: true }
+      { id: 20, desc: 'Auth redirection guard for unauthenticated users', email: '', pass: '', isValid: false, isGuard: true }
     ];
 
     authScenarios.forEach((scenario) => {
