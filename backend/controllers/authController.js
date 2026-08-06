@@ -42,19 +42,31 @@ const registerUser = async (req, res) => {
       const message = `You are receiving this email because you need to verify your account.\n\nPlease make a GET request to: \n\n ${verifyUrl}`;
 
       try {
-        await sendEmail({
+        const verifyPreview = await sendEmail({
           email: user.email,
           subject: 'Email Verification',
           message,
         });
-      } catch (error) {
-        console.error('Error sending verification email', error);
-      }
+        
+        // Also send Welcome Email as requested
+        const welcomePreview = await sendEmail({
+          email: user.email,
+          subject: 'Welcome to EventMate! Successfully Registered',
+          message: `Hello ${user.name},\n\nWelcome to EventMate! You have successfully registered and created your account. We are excited to have you on board!`,
+        });
 
-      res.status(201).json({
-        message: 'Registration successful! Please check your email to verify your account.',
-        _id: user._id,
-      });
+        res.status(201).json({
+          message: 'Registration successful! Please check your email to verify your account.',
+          _id: user._id,
+          previewUrls: [verifyPreview, welcomePreview].filter(Boolean)
+        });
+      } catch (error) {
+        console.error('Error sending emails', error);
+        res.status(201).json({
+          message: 'Registration successful, but failed to send emails.',
+          _id: user._id,
+        });
+      }
     } else {
       res.status(400).json({ message: 'Invalid user data' });
     }
@@ -137,13 +149,13 @@ const forgotPassword = async (req, res) => {
     const message = `You are receiving this email because you (or someone else) requested a password reset.\n\nPlease click: \n\n ${resetUrl}`;
 
     try {
-      await sendEmail({
+      const previewUrl = await sendEmail({
         email: user.email,
         subject: 'Password Reset Token',
         message,
       });
 
-      res.json({ success: true, message: 'Email sent' });
+      res.json({ success: true, message: 'Email sent', previewUrl });
     } catch (error) {
       user.resetPasswordToken = undefined;
       user.resetPasswordExpire = undefined;

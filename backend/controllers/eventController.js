@@ -33,7 +33,7 @@ const getEventById = async (req, res) => {
 // @access  Private (Organizer)
 const createEvent = async (req, res) => {
   try {
-    const { title, description, category, date, time, location, isOnline, capacity, price, isFree, contactEmail, contactPhone, posterImage, chiefGuest, registrationDeadline, prizeDetails, certificateAvailable } = req.body;
+    const { title, description, category, date, time, location, isOnline, capacity, price, isFree, contactEmail, contactPhone, posterImage, chiefGuest, registrationDeadline, prizeDetails, certificateAvailable, paymentPhone, paymentQrCode } = req.body;
 
     const event = new Event({
       title,
@@ -53,6 +53,8 @@ const createEvent = async (req, res) => {
       registrationDeadline,
       prizeDetails,
       certificateAvailable,
+      paymentPhone,
+      paymentQrCode,
       organizer: req.user.id, // from authMiddleware
       status: 'Pending' // Requires admin approval
     });

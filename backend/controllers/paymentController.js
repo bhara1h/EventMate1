@@ -1,15 +1,8 @@
-const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const Registration = require('../models/Registration');
 const Event = require('../models/Event');
 const Payment = require('../models/Payment');
 const { v4: uuidv4 } = require('uuid');
-
-// Initialize Razorpay (Use test keys or placeholders)
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID || 'rzp_test_placeholder',
-  key_secret: process.env.RAZORPAY_SECRET || 'secret_placeholder',
-});
 
 // @desc    Create Razorpay Order
 // @route   POST /api/payments/create-order
@@ -55,34 +48,8 @@ const createOrder = async (req, res) => {
       return res.json({ success: true, message: 'Successfully registered for free event', registration });
     }
 
-    // For paid events
-    const options = {
-      amount: event.price * 100, // amount in smallest currency unit (paise)
-      currency: "INR",
-      receipt: `receipt_order_${uuidv4().slice(0,8)}`,
-    };
-
-    let order;
-    // Simulate Razorpay in demo/placeholder mode
-    if (!process.env.RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID === 'rzp_test_placeholder') {
-      order = {
-        id: `order_sim_${uuidv4().slice(0, 10)}`,
-        entity: 'order',
-        amount: options.amount,
-        amount_paid: 0,
-        amount_due: options.amount,
-        currency: 'INR',
-        receipt: options.receipt,
-        status: 'created',
-        attempts: 0
-      };
-    } else {
-      order = await razorpay.orders.create(options);
-    }
-
-    if (!order) return res.status(500).json({ message: 'Some error occurred with Razorpay' });
-
-    res.json(order);
+    // For paid events (Gateway removed, frontend uses manual submit)
+    return res.status(400).json({ message: 'Gateway removed. Paid events must use manual-submit endpoint.' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

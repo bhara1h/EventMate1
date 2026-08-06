@@ -43,6 +43,9 @@ const eventSchema = new mongoose.Schema({
   eventFee: { type: Number, default: 0 },
   organizerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   
+  paymentQrCode: { type: String },
+  paymentPhone: { type: String },
+  
   createdAt: { type: Date, default: Date.now }
 });
 

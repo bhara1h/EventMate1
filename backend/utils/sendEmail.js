@@ -1,16 +1,31 @@
 const nodemailer = require('nodemailer');
 
 const sendEmail = async (options) => {
-  // We'll create a mock transporter for local development 
-  // that uses ethereal email or just logs to console
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'smtp.ethereal.email',
-    port: process.env.SMTP_PORT || 587,
-    auth: {
-      user: process.env.SMTP_EMAIL || 'mockuser@ethereal.email',
-      pass: process.env.SMTP_PASSWORD || 'mockpassword',
-    },
-  });
+  let transporter;
+
+  // Use configured SMTP if available
+  if (process.env.SMTP_HOST) {
+    transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: process.env.SMTP_PORT,
+      auth: {
+        user: process.env.SMTP_EMAIL,
+        pass: process.env.SMTP_PASSWORD,
+      },
+    });
+  } else {
+    // Dynamically generate a test account if no SMTP provided (Real-time testing)
+    const testAccount = await nodemailer.createTestAccount();
+    transporter = nodemailer.createTransport({
+      host: 'smtp.ethereal.email',
+      port: 587,
+      secure: false,
+      auth: {
+        user: testAccount.user,
+        pass: testAccount.pass,
+      },
+    });
+  }
 
   const message = {
     from: `${process.env.FROM_NAME || 'EventMate'} <${process.env.FROM_EMAIL || 'noreply@eventmate.com'}>`,
@@ -20,18 +35,19 @@ const sendEmail = async (options) => {
     html: options.html,
   };
 
-  // Skip actual sending if we're in mock mode and just log the URL
+  const info = await transporter.sendMail(message);
+  
   if (!process.env.SMTP_HOST) {
     console.log(`\n================================`);
-    console.log(`MOCK EMAIL SENT TO: ${options.email}`);
+    console.log(`REALTIME EMAIL SENT TO: ${options.email}`);
     console.log(`SUBJECT: ${options.subject}`);
-    console.log(`MESSAGE:\n${options.message}`);
+    console.log(`PREVIEW URL: ${nodemailer.getTestMessageUrl(info)}`);
     console.log(`================================\n`);
-    return;
+  } else {
+    console.log('Message sent: %s', info.messageId);
   }
-
-  const info = await transporter.sendMail(message);
-  console.log('Message sent: %s', info.messageId);
+  
+  return nodemailer.getTestMessageUrl(info);
 };
 
 module.exports = sendEmail;

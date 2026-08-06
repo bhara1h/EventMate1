@@ -19,7 +19,8 @@ const OrganizerDashboard = () => {
     title: '', description: '', category: 'Technical', 
     date: '', time: '', location: '', capacity: '', price: 0, isFree: true,
     contactEmail: '', contactPhone: '', posterImage: '', chiefGuest: '', 
-    registrationDeadline: '', prizeDetails: '', certificateAvailable: false
+    registrationDeadline: '', prizeDetails: '', certificateAvailable: false,
+    paymentQrCode: '', paymentPhone: ''
   });
 
   useEffect(() => {
@@ -105,7 +106,8 @@ const OrganizerDashboard = () => {
         title: '', description: '', category: 'Technical', 
         date: '', time: '', location: '', capacity: '', price: 0, isFree: true,
         contactEmail: '', contactPhone: '', posterImage: '', chiefGuest: '', 
-        registrationDeadline: '', prizeDetails: '', certificateAvailable: false
+        registrationDeadline: '', prizeDetails: '', certificateAvailable: false,
+        paymentQrCode: '', paymentPhone: ''
       });
       fetchMyEvents();
     } catch (error) {
@@ -277,9 +279,21 @@ const OrganizerDashboard = () => {
                 <label htmlFor="isFree" className="text-sm font-bold text-slate-800">This is a free event</label>
               </div>
               {!formData.isFree && (
-                <div>
-                  <label className="block text-sm font-medium mb-1">Price (₹)</label>
-                  <input type="number" name="price" value={formData.price} onChange={handleChange} min="1" required className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" />
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Price (₹)</label>
+                    <input type="number" name="price" value={formData.price} onChange={handleChange} min="1" required className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-1">UPI Phone Number</label>
+                      <input type="text" name="paymentPhone" value={formData.paymentPhone} onChange={handleChange} required className="w-full px-3 py-2 border rounded-lg" placeholder="e.g. 9876543210" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">UPI QR Code URL</label>
+                      <input type="url" name="paymentQrCode" value={formData.paymentQrCode} onChange={handleChange} required className="w-full px-3 py-2 border rounded-lg" placeholder="https://imgur.com/qrcode.jpg" />
+                    </div>
+                  </div>
                 </div>
               )}
             </div>

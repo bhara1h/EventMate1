@@ -50,7 +50,7 @@ const Payment = () => {
         eventId: event._id,
         transactionId: transactionId,
         screenshotUrl: screenshotUrl,
-        paymentMethod: paymentMethod
+        paymentMethod: 'Manual Transfer'
       };
 
       const result = await api.post('/payments/manual-submit', verifyData);
@@ -126,41 +126,31 @@ const Payment = () => {
               </div>
             )}
 
-            {/* Payment Methods */}
-            <p className="text-sm font-bold text-slate-600 mb-3 uppercase tracking-wider">Select Payment Method</p>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-              {[
-                { id: 'Card', label: 'Card', icon: CreditCard },
-                { id: 'UPI', label: 'UPI', icon: Smartphone },
-                { id: 'Netbanking', label: 'Net Bank', icon: Landmark },
-                { id: 'Wallet', label: 'Wallet', icon: Wallet },
-              ].map(m => {
-                const Icon = m.icon;
-                return (
-                  <button
-                    key={m.id}
-                    onClick={() => setPaymentMethod(m.id)}
-                    className={`p-4 rounded-xl border flex flex-col items-center justify-center gap-2 transition font-medium ${
-                      paymentMethod === m.id
-                        ? 'border-blue-600 bg-blue-50 text-blue-600 shadow-sm'
-                        : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
-                    }`}
-                  >
-                    <Icon className="w-6 h-6" />
-                    <span className="text-xs">{m.label}</span>
-                  </button>
-                );
-              })}
+            <div className="mb-6">
+              <p className="text-sm text-slate-600 mb-2 font-medium">
+                This event organizer uses Manual Verification for payments.
+              </p>
             </div>
 
             {/* Payment Inputs */}
             <form onSubmit={handlePay} className="space-y-4">
-              <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 mb-4">
-                <p className="text-sm text-blue-800 font-medium mb-2">
-                  Please transfer the amount using your selected payment method to our official account, then enter the transaction details below.
-                </p>
-                <p className="text-xs text-blue-600 font-bold">UPI ID: eventmate@upi</p>
-                <p className="text-xs text-blue-600 font-bold">Bank: SBI Account 1234567890 (IFSC: SBIN0000001)</p>
+              <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 mb-4 flex flex-col md:flex-row gap-4 items-center">
+                <div className="flex-1">
+                  <p className="text-sm text-blue-800 font-medium mb-3">
+                    Please transfer the amount to the Organizer's official account, then enter the transaction details below.
+                  </p>
+                  <p className="text-lg text-blue-900 font-bold mb-1">
+                    UPI Phone / Number: {event.paymentPhone || 'Not provided'}
+                  </p>
+                  <p className="text-xs text-blue-600 font-medium">
+                    Scan the QR code to pay securely via any UPI app (GPay, PhonePe, Paytm).
+                  </p>
+                </div>
+                {event.paymentQrCode && (
+                  <div className="shrink-0 p-2 bg-white rounded-xl shadow-sm border border-blue-200">
+                    <img src={event.paymentQrCode} alt="Payment QR" className="w-32 h-32 object-contain rounded-lg" />
+                  </div>
+                )}
               </div>
 
               <div>
@@ -238,7 +228,7 @@ const Payment = () => {
                 <span>₹{tax}</span>
               </div>
               <div className="flex justify-between text-sm text-slate-600">
-                <span>Secure Gateway Fee</span>
+                <span>Platform Fee</span>
                 <span className="text-green-600 font-medium">FREE</span>
               </div>
               <div className="flex justify-between border-t border-slate-100 pt-3 font-bold text-lg text-slate-800">
