@@ -1,0 +1,92 @@
+name: Flutter Appium E2E Tests
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  flutter-e2e-testing:
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: ./flutter-e2e-automation
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: './flutter-e2e-automation/package-lock.json'
+
+    - name: Install Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Enable KVM
+      run: |
+        echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+        sudo udevadm control --reload-rules
+        sudo udevadm trigger --name-match=kvm
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Install Appium & Flutter Driver
+      run: |
+        npm install -g appium@next
+        appium driver install uiautomator2
+        appium driver install --source=npm appium-flutter-driver
+
+    - name: Run Appium Tests on Android Emulator
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: 30
+        target: default
+        arch: x86_64
+        profile: pixel_5
+        script: |
+          # The runner executes this block while emulator is running
+          cd flutter-e2e-automation
+          # Ensure Appium server is running in background
+          appium &
+          sleep 10
+          npm run test
+      env:
+        APK_PATH: /path/to/downloaded/flutter-app-debug.apk
+
+    - name: Upload Excel Report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: Flutter-E2E-Report-Excel
+        path: flutter-e2e-automation/excel/Flutter_E2E_Report.xlsx
+
+    - name: Upload Mochawesome Report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: Flutter-E2E-Report-HTML
+        path: flutter-e2e-automation/reports/html/
+
+    - name: Upload Failure Screenshots
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: Flutter-Failure-Screenshots
+        path: flutter-e2e-automation/reports/failures/
+
+    - name: Upload Device Logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: Flutter-Device-Logs
+        path: flutter-e2e-automation/logs/

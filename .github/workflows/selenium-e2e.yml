@@ -1,0 +1,68 @@
+name: Selenium E2E Tests
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  e2e-testing:
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: ./e2e-automation
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: './e2e-automation/package-lock.json'
+
+    - name: Install Dependencies
+      run: npm install
+
+    # Xvfb is required for headless browsers on Linux CI to establish a virtual display
+    - name: Setup Display (Xvfb)
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y xvfb
+
+    - name: Run Selenium Tests (Headless)
+      run: xvfb-run --auto-servernum npm run test:headless
+      env:
+        BASE_URL: ${{ secrets.BASE_URL || 'http://localhost:5173' }}
+
+    - name: Upload Excel Report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: E2E-Report-Excel
+        path: e2e-automation/excel/E2E_Report.xlsx
+
+    - name: Upload Mochawesome Report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: E2E-Report-HTML
+        path: e2e-automation/reports/html/
+
+    - name: Upload Failure Screenshots
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: E2E-Failure-Screenshots
+        path: e2e-automation/reports/failures/
+
+    - name: Upload Logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: E2E-Logs
+        path: e2e-automation/logs/

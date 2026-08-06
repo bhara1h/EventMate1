@@ -1,0 +1,15 @@
+{
+  "extension": ["js"],
+  "spec": "tests/**/*.spec.js",
+  "timeout": 60000,
+  "reporter": "mochawesome",
+  "reporter-option": [
+    "reportDir=reports/html",
+    "reportFilename=E2E_Report",
+    "html=true",
+    "json=true",
+    "overwrite=true"
+  ],
+  "retries": 1,
+  "color": true
+}

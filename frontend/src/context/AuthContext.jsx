@@ -39,13 +39,8 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     const res = await api.post('/auth/register', userData);
-    sessionStorage.setItem('token', res.data.token);
-    setUser(res.data);
-    
-    // Redirect based on role
-    if (res.data.role === 'Admin') navigate('/admin/dashboard');
-    else if (res.data.role === 'Organizer') navigate('/organizer/dashboard');
-    else navigate('/student/dashboard');
+    // Do NOT auto login or set token, because email verification is required
+    return res.data;
   };
 
   const logout = () => {

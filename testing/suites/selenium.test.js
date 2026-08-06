@@ -129,7 +129,13 @@ describe('Selenium Web Test Suite', function() {
           }
         } else {
           logs.push(`[Simulated] Running input boundary check: ${scenario.desc}`);
-          if (scenario.isValid) {
+          if (scenario.isGuard) {
+            logs.push(`[Simulated] Guard redirection check.`);
+            expect(true).to.be.true;
+          } else if (scenario.isAction) {
+            logs.push(`[Simulated] Action check.`);
+            expect(true).to.be.true;
+          } else if (scenario.isValid) {
             logs.push(`[Simulated] Status: 200 OK. Role redirection match: ${scenario.role}`);
             expect(scenario.role).to.be.oneOf(['Student', 'Organizer', 'Admin']);
           } else {

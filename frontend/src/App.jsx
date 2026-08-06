@@ -5,6 +5,10 @@ import Auth from './pages/Auth';
 import StudentDashboard from './pages/StudentDashboard';
 import OrganizerDashboard from './pages/OrganizerDashboard';
 import AdminDashboard from './pages/AdminDashboard';
+import Payment from './pages/Payment';
+import VerifyEmail from './pages/VerifyEmail';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 import AttendanceScanner from './pages/AttendanceScanner';
 import AIChatbot from './components/AIChatbot';
@@ -30,7 +34,11 @@ function App() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/verifyemail/:token" element={<VerifyEmail />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route path="/student/dashboard" element={<StudentDashboard />} />
+            <Route path="/payment/:eventId" element={<Payment />} />
             <Route path="/organizer/dashboard" element={<OrganizerDashboard />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
 
