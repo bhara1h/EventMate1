@@ -3,6 +3,9 @@ import { ExcelReporter } from '../utilities/ExcelReporter.js';
 dotenv.config();
 
 export const config = {
+    autoCompileOpts: {
+        autoCompile: false
+    },
     runner: 'local',
     port: 4723,
     specs: [
