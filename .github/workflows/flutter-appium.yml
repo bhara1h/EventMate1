@@ -12,7 +12,7 @@ jobs:
     
     defaults:
       run:
-        working-directory: ./flutter-e2e-automation
+        working-directory: ./mobile/flutter-e2e-automation
 
     steps:
     - name: Checkout Repository
@@ -23,7 +23,7 @@ jobs:
       with:
         node-version: '20'
         cache: 'npm'
-        cache-dependency-path: './flutter-e2e-automation/package-lock.json'
+        cache-dependency-path: './mobile/flutter-e2e-automation/package-lock.json'
 
     - name: Install Java
       uses: actions/setup-java@v3
@@ -55,7 +55,7 @@ jobs:
         profile: pixel_5
         script: |
           # The runner executes this block while emulator is running
-          cd flutter-e2e-automation
+          cd mobile/flutter-e2e-automation
           # Ensure Appium server is running in background
           appium &
           sleep 10
@@ -68,25 +68,25 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: Flutter-E2E-Report-Excel
-        path: flutter-e2e-automation/excel/Flutter_E2E_Report.xlsx
+        path: mobile/flutter-e2e-automation/excel/Flutter_E2E_Report.xlsx
 
     - name: Upload Mochawesome Report
       if: always()
       uses: actions/upload-artifact@v4
       with:
         name: Flutter-E2E-Report-HTML
-        path: flutter-e2e-automation/reports/html/
+        path: mobile/flutter-e2e-automation/reports/html/
 
     - name: Upload Failure Screenshots
       if: failure()
       uses: actions/upload-artifact@v4
       with:
         name: Flutter-Failure-Screenshots
-        path: flutter-e2e-automation/reports/failures/
+        path: mobile/flutter-e2e-automation/reports/failures/
 
     - name: Upload Device Logs
       if: always()
       uses: actions/upload-artifact@v4
       with:
         name: Flutter-Device-Logs
-        path: flutter-e2e-automation/logs/
+        path: mobile/flutter-e2e-automation/logs/
