@@ -45,7 +45,7 @@ export default function PendingPaymentsScreen() {
         <Text className="font-bold text-slate-800 text-lg flex-1">{item.event?.title}</Text>
         <Text className="font-black text-blue-600">₹{item.amount}</Text>
       </View>
-      
+
       <View className="mb-3 gap-y-1">
         <Text className="text-slate-600 text-sm"><Text className="font-bold">Student:</Text> {item.user?.name}</Text>
         <Text className="text-slate-600 text-sm"><Text className="font-bold">TxID:</Text> {item.transactionId}</Text>
@@ -57,14 +57,14 @@ export default function PendingPaymentsScreen() {
       </View>
 
       <View className="flex-row gap-x-2 pt-2 border-t border-slate-100 mt-1">
-        <TouchableOpacity 
+        <TouchableOpacity
           className="flex-1 bg-green-50 py-2 rounded-lg flex-row justify-center items-center mr-1"
           onPress={() => handleVerify(item._id, 'approve')}
         >
           <CheckCircle2 size={16} color="#16a34a" />
           <Text className="text-green-700 font-bold ml-1 text-sm">Approve</Text>
         </TouchableOpacity>
-        <TouchableOpacity 
+        <TouchableOpacity
           className="flex-1 bg-red-50 py-2 rounded-lg flex-row justify-center items-center ml-1"
           onPress={() => handleVerify(item._id, 'reject')}
         >
@@ -86,6 +86,7 @@ export default function PendingPaymentsScreen() {
         <ActivityIndicator size="large" color="#2563eb" className="mt-10" />
       ) : (
         <FlatList
+          //
           data={payments}
           keyExtractor={item => item._id}
           renderItem={renderPayment}
