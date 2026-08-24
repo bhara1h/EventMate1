@@ -55,7 +55,7 @@ jobs:
           # The runner executes this block while emulator is running
           cd mobile/flutter-e2e-automation && npx appium &
           # Ensure Appium server is running in background
-          cd mobile/flutter-e2e-automation && sleep 10 && npm run test
+          cd mobile/flutter-e2e-automation && sleep 10 && rm -rf node_modules/ts-node && npm run test
       env:
         APK_PATH: /path/to/downloaded/flutter-app-debug.apk
 
