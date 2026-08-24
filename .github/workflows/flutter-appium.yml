@@ -40,11 +40,9 @@ jobs:
     - name: Install Dependencies
       run: npm install --legacy-peer-deps
 
-    - name: Install Appium & Flutter Driver
+    - name: Install missing drivers
       run: |
-        npm install -g appium@next
-        appium driver install uiautomator2
-        appium driver install --source=npm appium-flutter-driver
+        npx appium driver install uiautomator2 || true
 
     - name: Run Appium Tests on Android Emulator
       uses: reactivecircus/android-emulator-runner@v2
@@ -57,7 +55,7 @@ jobs:
           # The runner executes this block while emulator is running
           cd mobile/flutter-e2e-automation
           # Ensure Appium server is running in background
-          appium &
+          npx appium &
           sleep 10
           npm run test
       env:

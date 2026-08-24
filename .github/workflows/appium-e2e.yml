@@ -40,10 +40,7 @@ jobs:
     - name: Install Dependencies
       run: npm install --legacy-peer-deps
 
-    - name: Install Appium & UiAutomator2
-      run: |
-        npm install -g appium@next
-        appium driver install uiautomator2
+
 
     - name: Run Appium Tests on Android Emulator
       uses: reactivecircus/android-emulator-runner@v2
@@ -56,7 +53,7 @@ jobs:
           # The runner executes this block while emulator is running
           cd mobile/mobile-e2e-automation
           # Ensure Appium server is running in background
-          appium &
+          npx appium &
           sleep 10
           npm run test
       env:
