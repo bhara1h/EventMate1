@@ -6,6 +6,7 @@ export const config = {
     autoCompileOpts: {
         autoCompile: false
     },
+    execArgv: [],
     runner: 'local',
     port: 4723,
     specs: [
