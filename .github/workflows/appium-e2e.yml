@@ -51,11 +51,9 @@ jobs:
         profile: pixel_5
         script: |
           # The runner executes this block while emulator is running
-          cd mobile/mobile-e2e-automation
+          cd mobile/mobile-e2e-automation && npx appium &
           # Ensure Appium server is running in background
-          npx appium &
-          sleep 10
-          npm run test
+          cd mobile/mobile-e2e-automation && sleep 10 && npm run test
       env:
         # Assuming you provide a pre-built APK via URL or artifact for CI
         APK_PATH: /path/to/downloaded/app-release.apk
