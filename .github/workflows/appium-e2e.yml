@@ -42,6 +42,9 @@ jobs:
 
 
 
+    - name: Download Sample APK
+      run: curl -L -o /tmp/sample.apk https://github.com/webdriverio/native-demo-app/releases/download/v0.4.0/Android-NativeDemoApp-0.4.0.apk
+
     - name: Run Appium Tests on Android Emulator
       uses: reactivecircus/android-emulator-runner@v2
       with:
@@ -55,8 +58,7 @@ jobs:
           # Ensure Appium server is running in background
           cd mobile/mobile-e2e-automation && sleep 10 && rm -rf node_modules/ts-node && npm run test
       env:
-        # Assuming you provide a pre-built APK via URL or artifact for CI
-        APK_PATH: /path/to/downloaded/app-release.apk
+        APK_PATH: /tmp/sample.apk
 
     - name: Upload Excel Report
       if: always()

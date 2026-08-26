@@ -15,7 +15,7 @@ export const config = {
     maxInstances: process.env.PARALLEL ? 3 : 1,
     capabilities: [{
         platformName: 'Android',
-        'appium:automationName': 'Flutter',
+        'appium:automationName': 'UiAutomator2',
         'appium:deviceName': process.env.DEVICE_NAME || 'Android Emulator',
         'appium:app': process.env.APK_PATH || undefined,
         'appium:appPackage': process.env.APP_PACKAGE || 'com.company.app',
