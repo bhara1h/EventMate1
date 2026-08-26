@@ -69,6 +69,14 @@ jobs:
         python -c "content = open('generate_test_cases.py', 'r').read(); content = content.replace('EventMate_Test_Cases.xlsx', 'appium-tests/Appium_Test_Cases.xlsx'); content = content.replace('EventMate_Test_Summary.xlsx', 'appium-tests/Appium_Test_Summary.xlsx'); open('gen_appium.py', 'w').write(content)"
         python gen_appium.py
 
+    - name: Auto-commit Generated Files
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        git add selenium-tests/ appium-tests/ gen_selenium.py gen_appium.py
+        git commit -m "Automated update of generated test cases" || echo "No changes to commit"
+        git push
+
     - name: Upload Testing Report Artifacts
       if: always()
       uses: actions/upload-artifact@v4
