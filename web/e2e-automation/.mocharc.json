@@ -1,5 +1,6 @@
 {
   "extension": ["js"],
+  "require": ["tests/BaseTest.js"],
   "spec": "tests/**/*.spec.js",
   "timeout": 60000,
   "reporter": "mochawesome",
