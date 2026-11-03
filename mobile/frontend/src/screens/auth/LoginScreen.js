@@ -39,6 +39,7 @@ export default function LoginScreen({ navigation }) {
             className="flex-1 ml-3 text-slate-800 text-base"
             placeholder="Email Address"
             testID="login-email-input"
+            accessibilityLabel="login-email-input"
             autoCapitalize="none"
             keyboardType="email-address"
             value={email}
@@ -52,6 +53,7 @@ export default function LoginScreen({ navigation }) {
             className="flex-1 ml-3 text-slate-800 text-base"
             placeholder="Password"
             testID="login-password-input"
+            accessibilityLabel="login-password-input"
             secureTextEntry
             value={password}
             onChangeText={setPassword}
@@ -61,6 +63,7 @@ export default function LoginScreen({ navigation }) {
         <TouchableOpacity 
           className="bg-blue-600 rounded-xl py-4 mt-2 shadow-sm flex-row justify-center items-center"
           testID="login-submit-button"
+          accessibilityLabel="login-submit-button"
           onPress={handleLogin}
           disabled={loading}
         >
@@ -73,7 +76,11 @@ export default function LoginScreen({ navigation }) {
 
         <View className="flex-row justify-center mt-6">
           <Text className="text-slate-500">Don't have an account? </Text>
-          <TouchableOpacity testID="login-register-link" onPress={() => navigation.navigate('Register')}>
+          <TouchableOpacity
+            testID="login-register-link"
+            accessibilityLabel="login-register-link"
+            onPress={() => navigation.navigate('Register')}
+          >
             <Text className="text-blue-600 font-bold">Register here</Text>
           </TouchableOpacity>
         </View>

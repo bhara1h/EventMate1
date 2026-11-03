@@ -43,7 +43,13 @@ export default function RegisterScreen({ navigation }) {
     <SafeAreaView className="flex-1 bg-slate-50">
       <ScrollView contentContainerStyle={{ padding: 24, paddingBottom: 60 }}>
         <View className="mb-8 mt-4">
-          <Text testID="register-screen-title" className="text-3xl font-extrabold text-blue-600 mb-2">Create Account</Text>
+          <Text
+            testID="register-screen-title"
+            accessibilityLabel="register-screen-title"
+            className="text-3xl font-extrabold text-blue-600 mb-2"
+          >
+            Create Account
+          </Text>
           <Text className="text-base text-slate-500">Join EventMate to explore or host events.</Text>
         </View>
 

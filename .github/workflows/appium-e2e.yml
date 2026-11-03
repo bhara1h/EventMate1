@@ -9,6 +9,18 @@ on:
 jobs:
   mobile-e2e-testing:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    services:
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+
+    env:
+      MONGO_URI: mongodb://127.0.0.1:27017/eventmate
+      JWT_SECRET: ci_test_secret_token_key_safe
+      EXPO_PUBLIC_API_URL: http://10.0.2.2:5000/api
     
     defaults:
       run:
@@ -23,7 +35,10 @@ jobs:
       with:
         node-version: '20'
         cache: 'npm'
-        cache-dependency-path: './mobile/mobile-e2e-automation/package-lock.json'
+        cache-dependency-path: |
+          ./mobile/mobile-e2e-automation/package-lock.json
+          ./mobile/frontend/package-lock.json
+          ./web/backend/package-lock.json
 
     - name: Install Java
       uses: actions/setup-java@v3
@@ -38,12 +53,36 @@ jobs:
         sudo udevadm trigger --name-match=kvm
 
     - name: Install Dependencies
-      run: npm install --legacy-peer-deps
+      run: npm ci --legacy-peer-deps
 
+    - name: Install Mobile App Dependencies
+      run: npm ci
+      working-directory: ./mobile/frontend
 
+    - name: Install Backend Dependencies
+      run: npm ci
+      working-directory: ./web/backend
 
-    - name: Download Sample APK
-      run: curl -L -o /tmp/sample.apk https://github.com/webdriverio/native-demo-app/releases/download/v0.4.0/Android-NativeDemoApp-0.4.0.apk
+    - name: Install Appium Android driver
+      run: npx appium driver install uiautomator2
+
+    - name: Generate Android project
+      run: npx expo prebuild --platform android --non-interactive --no-install
+      working-directory: ./mobile/frontend
+
+    - name: Cache Gradle dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('mobile/frontend/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+
+    - name: Build EventMate APK
+      run: ./gradlew assembleDebug
+      working-directory: ./mobile/frontend/android
 
     - name: Run Appium Tests on Android Emulator
       uses: reactivecircus/android-emulator-runner@v2
@@ -52,13 +91,26 @@ jobs:
         target: default
         arch: x86_64
         profile: pixel_5
+        disable-animations: true
         script: |
-          # The runner executes this block while emulator is running
-          cd mobile/mobile-e2e-automation && npx appium &
-          # Ensure Appium server is running in background
-          cd mobile/mobile-e2e-automation && sleep 10 && rm -rf node_modules/ts-node && npm run test
+          cd "$GITHUB_WORKSPACE/web/backend"
+          npm start > /tmp/eventmate-backend.log 2>&1 &
+          backend_pid=$!
+          trap 'kill "$backend_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 60); do
+            if curl --fail --silent http://127.0.0.1:5000/api/health; then
+              break
+            fi
+            if [ "$attempt" -eq 60 ]; then
+              cat /tmp/eventmate-backend.log
+              exit 1
+            fi
+            sleep 1
+          done
+          cd "$GITHUB_WORKSPACE/mobile/mobile-e2e-automation"
+          npm run test -- --spec ./tests/Authentication.spec.js
       env:
-        APK_PATH: /tmp/sample.apk
+        APK_PATH: ${{ github.workspace }}/mobile/frontend/android/app/build/outputs/apk/debug/app-debug.apk
 
     - name: Upload Excel Report
       if: always()

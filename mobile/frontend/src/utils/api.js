@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
-const API_URL = 'http://10.79.80.20:5000/api'; // Changed to your actual Wi-Fi IP address for phone testing
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://10.94.19.102:5000/api';
 
 const api = axios.create({
   baseURL: API_URL,
