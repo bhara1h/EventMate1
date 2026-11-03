@@ -9,10 +9,7 @@ on:
 jobs:
   flutter-e2e-testing:
     runs-on: ubuntu-latest
-    
-    defaults:
-      run:
-        working-directory: ./mobile/flutter-e2e-automation
+    timeout-minutes: 60
 
     steps:
     - name: Checkout Repository
@@ -38,11 +35,14 @@ jobs:
         sudo udevadm trigger --name-match=kvm
 
     - name: Install Dependencies
+      working-directory: ./mobile/flutter-e2e-automation
       run: npm install --legacy-peer-deps
 
-    - name: Install missing drivers
+    - name: Install Appium drivers into project
+      working-directory: ./mobile/flutter-e2e-automation
       run: |
-        npx appium driver install uiautomator2 || true
+        npx appium driver install uiautomator2
+        npx appium driver install flutter || true
 
     - name: Download Sample APK
       run: curl -L -o /tmp/sample.apk https://github.com/webdriverio/native-demo-app/releases/download/v0.4.0/Android-NativeDemoApp-0.4.0.apk
@@ -54,10 +54,21 @@ jobs:
         target: default
         arch: x86_64
         profile: pixel_5
+        disable-animations: true
+        emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
         script: |
-          cd mobile/flutter-e2e-automation
+          cd "$GITHUB_WORKSPACE/mobile/flutter-e2e-automation"
           npx appium &
-          sleep 10
+          APPIUM_PID=$!
+          trap "kill $APPIUM_PID 2>/dev/null || true" EXIT
+          for i in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4723/status; then
+              echo "Appium server is ready"
+              break
+            fi
+            echo "Waiting for Appium... attempt $i"
+            sleep 2
+          done
           npm run test
       env:
         APK_PATH: /tmp/sample.apk

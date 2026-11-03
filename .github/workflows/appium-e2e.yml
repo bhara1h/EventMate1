@@ -9,22 +9,23 @@ on:
 jobs:
   mobile-e2e-testing:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 90
 
     services:
       mongodb:
         image: mongo:7
         ports:
           - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ping:1})'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     env:
       MONGO_URI: mongodb://127.0.0.1:27017/eventmate
       JWT_SECRET: ci_test_secret_token_key_safe
       EXPO_PUBLIC_API_URL: http://10.0.2.2:5000/api
-    
-    defaults:
-      run:
-        working-directory: ./mobile/mobile-e2e-automation
 
     steps:
     - name: Checkout Repository
@@ -37,7 +38,6 @@ jobs:
         cache: 'npm'
         cache-dependency-path: |
           ./mobile/mobile-e2e-automation/package-lock.json
-          ./mobile/frontend/package-lock.json
           ./web/backend/package-lock.json
 
     - name: Install Java
@@ -53,22 +53,24 @@ jobs:
         sudo udevadm trigger --name-match=kvm
 
     - name: Install E2E Test Dependencies
+      working-directory: ./mobile/mobile-e2e-automation
       run: npm ci --legacy-peer-deps
 
-    - name: Install Mobile App Dependencies
-      run: npm ci
-      working-directory: ./mobile/frontend
-
     - name: Install Backend Dependencies
-      run: npm ci
       working-directory: ./web/backend
+      run: npm ci --legacy-peer-deps
 
     - name: Install Appium Android driver
+      working-directory: ./mobile/mobile-e2e-automation
       run: npx appium driver install uiautomator2
 
-    - name: Generate Android project
-      run: npx expo prebuild --platform android --non-interactive --no-install
+    - name: Install Mobile App Dependencies
       working-directory: ./mobile/frontend
+      run: npm install --legacy-peer-deps
+
+    - name: Generate Android project
+      working-directory: ./mobile/frontend
+      run: npx expo prebuild --platform android --non-interactive --no-install
 
     - name: Cache Gradle dependencies
       uses: actions/cache@v4
@@ -76,13 +78,13 @@ jobs:
         path: |
           ~/.gradle/caches
           ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('mobile/frontend/package-lock.json') }}
+        key: ${{ runner.os }}-gradle-${{ hashFiles('mobile/frontend/android/**/*.gradle*', 'mobile/frontend/android/gradle/wrapper/gradle-wrapper.properties') }}
         restore-keys: |
           ${{ runner.os }}-gradle-
 
     - name: Build EventMate APK
-      run: ./gradlew assembleDebug
       working-directory: ./mobile/frontend/android
+      run: ./gradlew assembleDebug --no-daemon
 
     - name: Run Appium Tests on Android Emulator
       uses: reactivecircus/android-emulator-runner@v2
@@ -92,9 +94,10 @@ jobs:
         arch: x86_64
         profile: pixel_5
         disable-animations: true
+        emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
         script: |
           cd "$GITHUB_WORKSPACE/web/backend"
-          npm start > /tmp/eventmate-backend.log 2>&1 &
+          node server.js > /tmp/eventmate-backend.log 2>&1 &
           backend_pid=$!
           trap 'kill "$backend_pid" 2>/dev/null || true' EXIT
           for attempt in $(seq 1 60); do
@@ -107,12 +110,22 @@ jobs:
               cat /tmp/eventmate-backend.log
               exit 1
             fi
-            sleep 1
+            sleep 2
           done
           cd "$GITHUB_WORKSPACE/mobile/mobile-e2e-automation"
           npm run test -- --spec ./tests/Authentication.spec.js
       env:
         APK_PATH: ${{ github.workspace }}/mobile/frontend/android/app/build/outputs/apk/debug/app-debug.apk
+        MONGO_URI: mongodb://127.0.0.1:27017/eventmate
+        JWT_SECRET: ci_test_secret_token_key_safe
+
+    - name: Upload Backend Log on Failure
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: backend-log
+        path: /tmp/eventmate-backend.log
+        if-no-files-found: ignore
 
     - name: Upload Excel Report
       if: always()

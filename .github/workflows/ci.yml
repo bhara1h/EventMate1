@@ -28,7 +28,7 @@ jobs:
         cache-dependency-path: |
           web/backend/package-lock.json
           web/frontend/package-lock.json
-          web/testing/package-lock.json
+          web/e2e-automation/package-lock.json
 
     - name: Install Backend Dependencies
       run: |
@@ -40,19 +40,20 @@ jobs:
         cd web/frontend
         npm install --legacy-peer-deps
 
-    - name: Install Testing Dependencies
+    - name: Install E2E Test Dependencies
       run: |
-        cd web/testing
+        cd web/e2e-automation
         npm install --legacy-peer-deps
 
     - name: Run E2E Test Suites
       run: |
-        cd web/testing
-        npm run test:all || echo "Tests failed but continuing to generate reports"
+        cd web/e2e-automation
+        npm run test || echo "Tests failed but continuing to generate reports"
       env:
         PORT: 5000
         JWT_SECRET: ci_test_secret_token_key_safe
         NODE_ENV: test
+        HEADLESS: 'true'
 
     - name: Setup Python
       uses: actions/setup-python@v4
@@ -88,7 +89,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: eventmate-test-report
-        path: web/testing/reports/
+        path: web/e2e-automation/reports/
         retention-days: 14
         if-no-files-found: ignore
 

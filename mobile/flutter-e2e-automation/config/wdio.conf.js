@@ -10,7 +10,7 @@ export const config = {
     runner: 'local',
     port: 4723,
     specs: [
-        '../tests/**/*.spec.js'
+        './tests/**/*.spec.js'
     ],
     maxInstances: process.env.PARALLEL ? 3 : 1,
     capabilities: [{
@@ -48,27 +48,34 @@ export const config = {
     },
 
     afterTest: async function(test, context, { error, result, duration, passed, retries }) {
-        if (!passed) {
-            // driver.switchContext('NATIVE_APP') might be required for screenshot if flutter driver fails
-            const screenshot = await driver.takeScreenshot();
-            const timestamp = new Date().getTime();
-            const filePath = `./reports/failures/screenshot_${timestamp}.png`;
-            import('fs').then(fs => fs.writeFileSync(filePath, screenshot, 'base64'));
+        const deviceName = process.env.DEVICE_NAME || 'Android Emulator';
+        if (!passed && error) {
+            try {
+                const screenshot = await driver.takeScreenshot();
+                const timestamp = new Date().getTime();
+                const fsModule = await import('fs');
+                const fs = fsModule.default;
+                fs.mkdirSync('./reports/failures', { recursive: true });
+                const filePath = `./reports/failures/screenshot_${timestamp}.png`;
+                fs.writeFileSync(filePath, screenshot, 'base64');
 
-            global.excelReporter.addFailure({
-                name: test.title,
-                reason: error.message,
-                screenshot: filePath,
-                device: capabilities[0]['appium:deviceName'],
-                version: capabilities[0]['appium:platformVersion'] || 'Unknown'
-            });
+                global.excelReporter.addFailure({
+                    name: test.title,
+                    reason: error.message,
+                    screenshot: filePath,
+                    device: deviceName,
+                    version: 'Unknown'
+                });
+            } catch (screenshotErr) {
+                console.warn('Failed to capture screenshot:', screenshotErr.message);
+            }
         }
-        
+
         global.excelReporter.addTestResult({
             id: `TC_${Date.now()}`,
             module: test.parent,
             scenario: test.title,
-            device: capabilities[0]['appium:deviceName'],
+            device: deviceName,
             status: passed ? 'passed' : 'failed',
             start: new Date(Date.now() - duration).toISOString(),
             end: new Date().toISOString(),

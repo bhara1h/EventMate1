@@ -36,7 +36,8 @@ jobs:
       run: npm install --legacy-peer-deps
       working-directory: ./web/e2e-automation
 
-    # Xvfb is required for headless browsers on Linux CI
+    # Xvfb is NOT required for headless Chrome (--headless=new handles this natively)
+    # Keep install for fallback compatibility
     - name: Setup Display (Xvfb)
       run: |
         sudo apt-get update -qq
@@ -84,7 +85,7 @@ jobs:
       working-directory: ./web/frontend
 
     - name: Run Selenium Tests (Headless)
-      run: xvfb-run --auto-servernum npm run test:headless
+      run: npm run test:headless
       working-directory: ./web/e2e-automation
       env:
         BASE_URL: http://localhost:5173
