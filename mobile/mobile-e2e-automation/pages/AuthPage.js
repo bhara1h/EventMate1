@@ -1,11 +1,10 @@
 import BasePage from './BasePage.js';
 
 class AuthPage extends BasePage {
-    get emailInput() { return '~Email Input'; } // Using accessibility ids
-    get passwordInput() { return '~Password Input'; }
-    get loginButton() { return '~Login Button'; }
-    get toggleRegisterBtn() { return '~Toggle Register Mode'; }
-    get errorMessage() { return '~Error Message'; }
+    get emailInput() { return '~login-email-input'; }
+    get passwordInput() { return '~login-password-input'; }
+    get loginButton() { return '~login-submit-button'; }
+    get toggleRegisterBtn() { return '~login-register-link'; }
 
     async login(email, password) {
         if (email) await this.typeText(this.emailInput, email);
@@ -13,12 +12,17 @@ class AuthPage extends BasePage {
         await this.tap(this.loginButton);
     }
 
-    async getError() {
-        return await this.getText(this.errorMessage);
+    async getError(message) {
+        const alertMessage = `android=new UiSelector().text("${message}")`;
+        return await this.getText(alertMessage);
     }
 
     async toggleAuthMode() {
         await this.tap(this.toggleRegisterBtn);
+    }
+
+    async dismissAlert() {
+        await this.tap('android=new UiSelector().text("OK")');
     }
 }
 

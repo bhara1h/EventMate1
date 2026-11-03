@@ -2,26 +2,26 @@ import AuthPage from '../pages/AuthPage.js';
 import { expect } from 'chai';
 
 describe('Authentication Appium Tests', () => {
-    
-    it('should throw validation error on empty credentials', async () => {
+    it('should show a validation error when credentials are empty', async () => {
         await AuthPage.login('', '');
-        
-        // Assume an accessibility id or message pops up
-        const isErrorDisplayed = await AuthPage.isElementDisplayed(AuthPage.errorMessage);
-        expect(isErrorDisplayed).to.be.true;
+
+        const errorText = await AuthPage.getError('Please fill in all fields');
+        expect(errorText).to.equal('Please fill in all fields');
+        await AuthPage.dismissAlert();
     });
 
-    it('should throw error on invalid credentials', async () => {
+    it('should show the backend error for invalid credentials', async () => {
         await AuthPage.login('invalid@example.com', 'wrongpassword');
-        const errorText = await AuthPage.getError();
-        expect(errorText).to.include('Invalid credentials');
+
+        const errorText = await AuthPage.getError('Invalid email or password');
+        expect(errorText).to.equal('Invalid email or password');
+        await AuthPage.dismissAlert();
     });
 
-    it('should successfully toggle to registration view', async () => {
+    it('should navigate to the registration screen', async () => {
         await AuthPage.toggleAuthMode();
-        // Check if a specific element on the register screen appears
-        // Assuming ~Register Button is present
-        const isRegisterVisible = await AuthPage.isElementDisplayed('~Register Button');
+
+        const isRegisterVisible = await AuthPage.isElementDisplayed('~register-screen-title');
         expect(isRegisterVisible).to.be.true;
     });
 });
