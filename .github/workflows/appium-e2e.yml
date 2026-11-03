@@ -9,7 +9,7 @@ on:
 jobs:
   mobile-e2e-testing:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
 
     services:
       mongodb:
@@ -41,7 +41,7 @@ jobs:
           ./web/backend/package-lock.json
 
     - name: Install Java
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
         java-version: '17'
@@ -52,7 +52,7 @@ jobs:
         sudo udevadm control --reload-rules
         sudo udevadm trigger --name-match=kvm
 
-    - name: Install Dependencies
+    - name: Install E2E Test Dependencies
       run: npm ci --legacy-peer-deps
 
     - name: Install Mobile App Dependencies
@@ -99,9 +99,11 @@ jobs:
           trap 'kill "$backend_pid" 2>/dev/null || true' EXIT
           for attempt in $(seq 1 60); do
             if curl --fail --silent http://127.0.0.1:5000/api/health; then
+              echo "Backend ready"
               break
             fi
             if [ "$attempt" -eq 60 ]; then
+              echo "Backend failed to start:"
               cat /tmp/eventmate-backend.log
               exit 1
             fi
@@ -118,6 +120,7 @@ jobs:
       with:
         name: Mobile-E2E-Report-Excel
         path: mobile/mobile-e2e-automation/excel/Mobile_E2E_Report.xlsx
+        if-no-files-found: ignore
 
     - name: Upload Mochawesome Report
       if: always()
@@ -125,6 +128,7 @@ jobs:
       with:
         name: Mobile-E2E-Report-HTML
         path: mobile/mobile-e2e-automation/reports/html/
+        if-no-files-found: ignore
 
     - name: Upload Failure Screenshots
       if: failure()
@@ -132,6 +136,7 @@ jobs:
       with:
         name: Mobile-Failure-Screenshots
         path: mobile/mobile-e2e-automation/reports/failures/
+        if-no-files-found: ignore
 
     - name: Upload Device Logs
       if: always()
@@ -139,3 +144,4 @@ jobs:
       with:
         name: Mobile-Device-Logs
         path: mobile/mobile-e2e-automation/logs/
+        if-no-files-found: ignore

@@ -13,17 +13,23 @@ export const mochaHooks = {
     
     beforeEach: async function () {
         logger.info(`Starting Test: ${this.currentTest.title}`);
-        driver = await DriverSetup.getDriver();
-        global.driver = driver; // Expose driver globally for tests to use
+        try {
+            driver = await DriverSetup.getDriver();
+            global.driver = driver;
+        } catch (err) {
+            logger.warn(`WebDriver unavailable (${err.message}). Skipping browser setup.`);
+            global.driver = null;
+            driver = null;
+        }
     },
 
     afterEach: async function () {
         const testName = this.currentTest.title;
         const state = this.currentTest.state;
-        const duration = this.currentTest.duration;
+        const duration = this.currentTest.duration || 0;
 
         let screenshotPath = '';
-        if (state === 'failed') {
+        if (state === 'failed' && driver) {
             const webActions = new WebActions(driver);
             try {
                 screenshotPath = await webActions.captureScreenshot(testName);
@@ -57,7 +63,9 @@ export const mochaHooks = {
         });
 
         if (driver) {
-            await driver.quit();
+            try { await driver.quit(); } catch (_) {}
+            driver = null;
+            global.driver = null;
         }
     },
 

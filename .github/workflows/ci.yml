@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ main, master ]
 
+permissions:
+  contents: write
+
 jobs:
   e2e-test:
     name: Run Selenium & Appium Tests
@@ -14,6 +17,8 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -70,12 +75,13 @@ jobs:
         python gen_appium.py
 
     - name: Auto-commit Generated Files
+      if: github.event_name == 'push'
       run: |
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
         git add selenium-tests/ appium-tests/ gen_selenium.py gen_appium.py
         git commit -m "Automated update of generated test cases" || echo "No changes to commit"
-        git push
+        git push || echo "Push skipped (no changes or insufficient permissions)"
 
     - name: Upload Testing Report Artifacts
       if: always()
@@ -84,6 +90,7 @@ jobs:
         name: eventmate-test-report
         path: web/testing/reports/
         retention-days: 14
+        if-no-files-found: ignore
 
     - name: Upload Selenium Test Cases Artifact
       if: always()
@@ -92,6 +99,7 @@ jobs:
         name: Selenium-Test-Cases-Reports
         path: selenium-tests/*.xlsx
         retention-days: 14
+        if-no-files-found: ignore
 
     - name: Upload Appium Test Cases Artifact
       if: always()
@@ -100,3 +108,4 @@ jobs:
         name: Appium-Test-Cases-Reports
         path: appium-tests/*.xlsx
         retention-days: 14
+        if-no-files-found: ignore

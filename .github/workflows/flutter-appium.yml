@@ -26,7 +26,7 @@ jobs:
         cache-dependency-path: './mobile/flutter-e2e-automation/package-lock.json'
 
     - name: Install Java
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
         java-version: '17'
@@ -55,10 +55,10 @@ jobs:
         arch: x86_64
         profile: pixel_5
         script: |
-          # The runner executes this block while emulator is running
-          cd mobile/flutter-e2e-automation && npx appium &
-          # Ensure Appium server is running in background
-          cd mobile/flutter-e2e-automation && sleep 10 && rm -rf node_modules/ts-node && npm run test
+          cd mobile/flutter-e2e-automation
+          npx appium &
+          sleep 10
+          npm run test
       env:
         APK_PATH: /tmp/sample.apk
 
@@ -68,6 +68,7 @@ jobs:
       with:
         name: Flutter-E2E-Report-Excel
         path: mobile/flutter-e2e-automation/excel/Flutter_E2E_Report.xlsx
+        if-no-files-found: ignore
 
     - name: Upload Mochawesome Report
       if: always()
@@ -75,6 +76,7 @@ jobs:
       with:
         name: Flutter-E2E-Report-HTML
         path: mobile/flutter-e2e-automation/reports/html/
+        if-no-files-found: ignore
 
     - name: Upload Failure Screenshots
       if: failure()
@@ -82,6 +84,7 @@ jobs:
       with:
         name: Flutter-Failure-Screenshots
         path: mobile/flutter-e2e-automation/reports/failures/
+        if-no-files-found: ignore
 
     - name: Upload Device Logs
       if: always()
@@ -89,3 +92,4 @@ jobs:
       with:
         name: Flutter-Device-Logs
         path: mobile/flutter-e2e-automation/logs/
+        if-no-files-found: ignore
